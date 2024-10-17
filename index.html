@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Simple Remote</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="bg">
+        <div class="bg-blur"></div>
+        <div class="bg-fade-top"></div>
+        <div class="bg-fade-bottom"></div>
+        <div class="bg-moving">
+            <div class="bg-stripe"></div>
+            <div class="bg-stripe"></div>
+            <div class="bg-stripe"></div>
+            <div class="bg-stripe"></div>
+            <div class="bg-stripe"></div>
+            <div class="bg-stripe"></div>
+            <div class="bg-stripe"></div>
+            <div class="bg-stripe"></div>
+            <div class="bg-stripe"></div>
+            <div class="bg-stripe"></div>
+            <div class="bg-stripe"></div>
+            <div class="bg-stripe"></div>
+        </div>
+    </div>
+
+    <div class="d-flex login">
+        <img class="logo-img" src="assets/logo.png">
+        <div class="d-flex password-input">
+            <div class="password-wrapper">
+                <input type="password" id="access-password" placeholder="Password">
+            </div>
+            <button class="show-password-btn">
+                <img src="assets/hide-icon.png">
+            </button>
+        </div>
+        <button class="connect-btn">Connect</button>
+    </div>
+
+    <div class="d-flex control" style="display: flex;">
+        <div class="d-flex video">
+            <p class="video-disabled">Video is disabled. You can enable it in the settings.</p>
+        </div>
+        <div class="d-flex settings-button"><img src="assets/settings.png"></div>
+        <div class="d-flex mousepad-to-keyboard-switch"><img src="assets/keyboard.png"></div>
+        <div class="d-flex keyboard-to-mousepad-switch"><img src="assets/mouse.png"></div>
+        <div class="d-flex mousepad">
+            <div class="d-flex mousepad-border">
+                Touchpad
+            </div>
+        </div>
+        <div class="keyboard">
+            <div class="d-flex keyboard-letters">
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="1">1</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="2">2</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="3">3</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="4">4</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="5">5</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="6">6</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="7">7</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="8">8</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="9">9</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="0">0</div>
+                </div>
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="q">q</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="w">w</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="e">e</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="r">r</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="t">t</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="z">z</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="u">u</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="i">i</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="o">o</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="p">p</div>
+                </div>
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="a">a</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="s">s</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="d">d</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="f">f</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="g">g</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="h">h</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="j">j</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="k">k</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="l">l</div>
+                </div>
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key special-key-wide shift-key"><img src="assets/lower-case.png"></div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="y">y</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="x">x</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="c">c</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="v">v</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="b">b</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="n">n</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="m">m</div>
+                    <div class="d-flex key special-key-wide backspace-key"><img src="assets/backspace.png"></div>
+                </div>
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key special-key-wide l-to-n-key">123</div>
+                    <div class="d-flex key aftertap-key" data-char=",">,</div>
+                    <div class="d-flex key space-key"><img src="assets/space.png"></div>
+                    <div class="d-flex key aftertap-key" data-char=".">.</div>
+                    <div class="d-flex key special-key-wide enter-key"><img src="assets/enter.png"></div>
+                </div>
+            </div>
+            
+            <div class="keyboard-numbers">
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="1">1</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="2">2</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="3">3</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="4">4</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="5">5</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="6">6</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="7">7</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="8">8</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="9">9</div>
+                    <div class="d-flex key shift-affected-key aftertap-key" data-char="0">0</div>
+                </div>
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key aftertap-key" data-char="@">@</div>
+                    <div class="d-flex key aftertap-key" data-char="#">#</div>
+                    <div class="d-flex key aftertap-key" data-char="€">€</div>
+                    <div class="d-flex key aftertap-key" data-char="&">&</div>
+                    <div class="d-flex key aftertap-key" data-char="_">_</div>
+                    <div class="d-flex key aftertap-key" data-char="-">-</div>
+                    <div class="d-flex key aftertap-key" data-char="(">(</div>
+                    <div class="d-flex key aftertap-key" data-char=")">)</div>
+                    <div class="d-flex key aftertap-key" data-char="=">=</div>
+                    <div class="d-flex key aftertap-key" data-char="%">%</div>
+                </div>
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key special-key-thin n-to-s-key">{&=</div>
+                    <div class="d-flex key aftertap-key" data-char='"'>"</div>
+                    <div class="d-flex key aftertap-key" data-char="*">*</div>
+                    <div class="d-flex key aftertap-key" data-char="'">'</div>
+                    <div class="d-flex key aftertap-key" data-char=":">:</div>
+                    <div class="d-flex key aftertap-key" data-char="/">/</div>
+                    <div class="d-flex key aftertap-key" data-char="!">!</div>
+                    <div class="d-flex key aftertap-key" data-char="?">?</div>
+                    <div class="d-flex key aftertap-key" data-char="+">+</div>
+                    <div class="d-flex key special-key-thin"><img src="assets/backspace.png"></div>
+                </div>
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key special-key-wide n-to-l-key">abc</div>
+                    <div class="d-flex key aftertap-key" data-char=",">,</div>
+                    <div class="d-flex key space-key"><img src="assets/space.png"></div>
+                    <div class="d-flex key aftertap-key" data-char=".">.</div>
+                    <div class="d-flex key special-key-wide"><img src="assets/enter.png"></div>
+                </div>
+            </div>
+
+            <div class="keyboard-symbols">
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key aftertap-key" data-char="$">$</div>
+                    <div class="d-flex key aftertap-key" data-char="€">€</div>
+                    <div class="d-flex key aftertap-key" data-char="¥">¥</div>
+                    <div class="d-flex key aftertap-key" data-char="¢">¢</div>
+                    <div class="d-flex key aftertap-key" data-char="©">©</div>
+                    <div class="d-flex key aftertap-key" data-char="®">®</div>
+                    <div class="d-flex key aftertap-key" data-char="™">™</div>
+                    <div class="d-flex key aftertap-key" data-char="~">~</div>
+                    <div class="d-flex key aftertap-key" data-char="¶">¶</div>
+                    <div class="d-flex key aftertap-key" data-char="§">§</div>
+                </div>
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key aftertap-key" data-char="[">[</div>
+                    <div class="d-flex key aftertap-key" data-char="]">]</div>
+                    <div class="d-flex key aftertap-key" data-char="{">{</div>
+                    <div class="d-flex key aftertap-key" data-char="}">}</div>
+                    <div class="d-flex key aftertap-key" data-char="<"><</div>
+                    <div class="d-flex key aftertap-key" data-char=">">></div>
+                    <div class="d-flex key aftertap-key" data-char="^">^</div>
+                    <div class="d-flex key aftertap-key" data-char="¬">¬</div>
+                    <div class="d-flex key aftertap-key" data-char="|">|</div>
+                    <div class="d-flex key aftertap-key" data-char="¦">¦</div>
+                </div>
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key special-key-thin s-to-n-key">123</div>
+                    <div class="d-flex key aftertap-key" data-char="°">°</div>
+                    <div class="d-flex key aftertap-key" data-char="÷">÷</div>
+                    <div class="d-flex key aftertap-key" data-char="`">`</div>
+                    <div class="d-flex key aftertap-key" data-char=";">;</div>
+                    <div class="d-flex key aftertap-key" data-char="\">\</div>
+                    <div class="d-flex key aftertap-key" data-char="¡">¡</div>
+                    <div class="d-flex key aftertap-key" data-char="¿">¿</div>
+                    <div class="d-flex key aftertap-key" data-char="×">×</div>
+                    <div class="d-flex key special-key-thin"><img src="assets/backspace.png"></div>
+                </div>
+                <div class="d-flex keyboard-row">
+                    <div class="d-flex key special-key-wide n-to-l-key">abc</div>
+                    <div class="d-flex key aftertap-key" data-char=",">,</div>
+                    <div class="d-flex key space-key"><img src="assets/space.png"></div>
+                    <div class="d-flex key aftertap-key" data-char=".">.</div>
+                    <div class="d-flex key special-key-wide"><img src="assets/enter.png"></div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="settings-blur"></div>
+    <div class="settings">
+        <div class="settings-navbar">
+            <div class="d-flex settings-tab-placeholder"></div>    
+            <div class="d-flex settings-tab-btn" data-settings-tab-btn="0"><img src="assets/accessibility.png"></div>
+            <div class="d-flex settings-tab-btn" data-settings-tab-btn="1"><img src="assets/keyboard.png"></div>
+            <div class="d-flex settings-tab-btn" data-settings-tab-btn="2"><img src="assets/screenshare.png"></div>
+            <div class="d-flex settings-tab-btn" data-settings-tab-btn="3"><img src="assets/diamond.png"></div>
+        </div>
+        <div class="setting-tabs">
+            <div class="settings-tab">
+                <ul>
+                    
+                    <h1>Accessibility</h1>
+                    <li class="setting">
+                        <p>Animated background</p>
+                        <label class="switch">
+                            <input type="checkbox" id="animated-background">
+                            <span class="slider"></span>
+                        </label>
+                    </li>
+                    <li class="setting">
+                        <p>Background color 1</p>
+                        <input type="color" id="background-color-1">
+                    </li>
+                    <li class="setting">
+                        <p>Background color 2</p>
+                        <input type="color" id="background-color-2">
+                    </li>
+                    <li class="setting">
+                        <p>Text color</p>
+                        <input type="color" id="text-color">
+                    </li>
+                    
+
+                </ul>
+                <div class="d-flex local-settings-buttons">
+                    <button class="reset-local-settings-btn">Reset</button>
+                    <button class="revert-local-settings-btn">Revert</button>
+                    <button class="save-local-settings-btn">Save</button>
+                </div>
+            </div>
+            <div class="settings-tab">
+                <ul>
+                    <h1>Controls</h1>
+                    <li class="setting">
+                        <p>Keyboard Layout</p>
+                        <select id="keyboard-layout">
+                            <option value="qwertz">QWERTZ</option>
+                            <option value="qwerty">QWERTY</option>
+                        </select>
+                    </li>
+
+                    <li class="setting">
+                        <p>Keyboard Letter Size</p>
+                        <select id="keyboard-letter-size">
+                            <option value="large">Large</option>
+                            <option value="medium">Medium</option>
+                            <option value="small">Small</option>
+                        </select>
+                    </li>
+
+                    <li class="setting">
+                        <p>Mouse Sensitivity</p>
+                        <div class="d-flex mouse-sensitivity-wrapper">
+                            <input type="range" min="100" max="500" value="100" id="mouse-sensitivity">
+                            <p class="mouse-sensitivity-output">100</p>
+                        </div>
+                    </li>
+
+                    <li class="setting">
+                        <p>Mouse Update Interval</p>
+                        <select id="mouse-update-interval">
+                            <option value="200">200 ms</option>
+                            <option value="100">100 ms</option>
+                            <option value="50">50 ms</option>
+                        </select>
+                    </li>
+
+                </ul>
+                <div class="d-flex local-settings-buttons">
+                    <button class="reset-local-settings-btn">Reset</button>
+                    <button class="revert-local-settings-btn">Revert</button>
+                    <button class="save-local-settings-btn">Save</button>
+                </div>
+            </div>
+            <div class="settings-tab">
+                <ul>
+                    <h1>Video</h1>
+                    <li class="setting">
+                        <p>Enabled</p>
+                        <label class="switch">
+                            <input type="checkbox" id="video-enabled">
+                            <span class="slider"></span>
+                        </label>
+                    </li>
+
+                    <li class="setting">
+                        <p>Video Quality</p>
+                        <select id="video-quality">
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </li>
+
+                    <li class="setting">
+                        <p>Video FPS</p>
+                        <select id="video-fps">
+                            <option value="20">20 FPS</option>
+                            <option value="10">10 FPS</option>
+                            <option value="6">6 FPS</option>
+                        </select>
+                    </li>
+                </ul>
+                <div class="d-flex local-settings-buttons">
+                    <button class="reset-local-settings-btn">Reset</button>
+                    <button class="revert-local-settings-btn">Revert</button>
+                    <button class="save-local-settings-btn">Save</button>
+                </div>
+            </div>
+            <div class="settings-tab">
+                <ul>
+                    <h1>Admin Settings</h1>
+                    <li class="setting">
+                        <p>Wifi:</p>
+                    </li>
+                    <li class="setting">
+                        <p>Name</p>
+                        <input type="text" id="wifi-name">
+                    </li>
+                    <li class="setting">
+                        <p>Password</p>
+                        <input type="text" id="wifi-password">
+                    </li>
+
+                    <li class="setting">
+                        <p>Access Method</p>
+                        <select id="access-method">
+                            <option value="password">Password</option>
+                            <option value="whitelist">Whitelist</option>
+                        </select>
+                    </li>
+
+                    <li class="setting">
+                        <p>Passwords:</p>
+                    </li>
+                    <li class="setting">
+                        <p>Access Password</p>
+                        <input type="text" id="access-password">
+                    </li>
+                    <li class="setting">
+                        <p>Admin Password</p>
+                        <input type="text" id="admin-password">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+</body>
+</html>

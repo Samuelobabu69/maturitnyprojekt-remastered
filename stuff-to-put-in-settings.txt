@@ -1,0 +1,73 @@
+IMPORTANT:
+Putting too much load on your network can 
+"clog" it, freezing the app.
+
+Video
+---------------------
+Video Quality:
+- High
+- Medium
+- Low
+i - The higher the quality, the slower the performance.
+
+Video Request Speed:
+- Fast
+- Medium
+- Slow 
+- Custom (input)
+i - Time it takes to request a frame of the screen.
+Fast = every 50ms, Medium = every 100ms,
+Slow = every 150ms. The higher the speed, 
+the slower the performance. 
+
+
+Controls
+---------------------
+Keyboard Layout:
+-QWERTZ
+-QWERTY
+
+Keyboard Letter Size:
+-Large
+-Medium
+-Small
+
+Mouse Sensitivity:
+-slider
+
+
+Accessibility
+---------------------
+Background Color 1
+Background Color 2
+Keyboard and Touchpad Color
+Text Color
+Text Size:
+- Large
+- Medium
+- Small
+
+
+Admin Settings (Password Protected)
+---------------------
+IMPORTANT:
+All settings will be applied after restarting the controller.
+
+Wifi:
+- Name
+- Password
+
+Access Methods:
+- Password
+- Whitelist
+i - Password = A password will be used to access the app,
+Whitelist = Only specific IPs will be able to access the app.
+
+Passwords:
+- Access Password
+- Admin Password
+i - Access Password = Password used to connect to the app,
+Admin Password = Password used to manage admin settings.
+
+Whitelist:
+- IPs
