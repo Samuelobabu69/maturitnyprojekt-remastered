@@ -58,7 +58,7 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
         elif data["type"] == "mouse":
             pass
 
-
+            
         if response:
             self.wfile.write(str(response).replace("'", '"').encode('utf-8'))  # Send JSON response
 

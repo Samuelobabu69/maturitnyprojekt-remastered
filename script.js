@@ -2,19 +2,19 @@ $(document).ready(() => {
 
     async function request (method, type, data, target) {
 
-        // This function is used to send a POST request to the server/app
+        // This function is used to send a POST request to the server/controller
 
         if (target == "pc") {
-            target = computerIp
+            target = `http://${computerIp}:80`
         }
         
         if (target == "mc") {
-            target = serverIp
+            target = "/"
         }
 
         let message = {type: type, data: data}
     
-        let something = await fetch(`http://${target}:80`, {
+        let something = await fetch(target, {
             method: method,
             headers: {
                 "Content-Type": "application/json"
@@ -24,7 +24,7 @@ $(document).ready(() => {
         .then(response => response.text())
         .catch(error => error);
 
-        return something;
+        return JSON.parse(something);
     }
 
     function inactiveLogout () {
@@ -42,7 +42,7 @@ $(document).ready(() => {
             loginError.text("Disconnected for inactivity.")
             settingsHidden = true;
             settingsScreen.css("left", "-100vw");
-        }, 5000);
+        }, 60000);
     }
     
 
@@ -97,15 +97,7 @@ $(document).ready(() => {
     const controlScreen = $(".control");
     const loginError = $(".login-error");
 
-    let logoutTimeout;
-    
-    // This SERVER_IP string is replaced by the server with
-    // it's actual IP address
-    let serverIp = "SERVER_IP";
-
-    // This COMPUTER_IP string is replaced by the server with
-    // the IP address of the computer
-    let computerIp = "COMPUTER_IP";
+    let logoutTimeout, computerIp;
     
     // Button to show/hide password on the login page
     showPasswordBtn.click(() => {
@@ -145,19 +137,20 @@ $(document).ready(() => {
 
         console.log(response);
 
-        if (response == "accessGranted") {
+        if (response["type"] == "accessGranted") {
+            computerIp = ["data"]
             loginScreen.css("display", "none");
             controlScreen.css("display", "block");
 
             inactiveLogout()
             $(document).on("touchstart touchmove touchend", inactiveLogout);
 
-        } else if (response == "accessDenied") {
+        } else if (response["type"] == "accessDenied") {
             loginError.text("Incorrect password");
-        } else if (response == "occupied") {
+        } else if (response["type"] == "occupied") {
             loginError.text("Device is occupied");
-        } else if (response == "ttlReached") {
-            loginError.text("TTL reached");
+        } else if (response["type"] == "ttlReached") {
+            loginError.text("Took too long");
         } else {
             loginError.text("Unknown error");
         }
