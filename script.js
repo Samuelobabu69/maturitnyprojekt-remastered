@@ -138,7 +138,7 @@ $(document).ready(() => {
         console.log(response);
 
         if (response["type"] == "accessGranted") {
-            computerIp = ["data"]
+            computerIp = response["data"]
             loginScreen.css("display", "none");
             controlScreen.css("display", "block");
 
