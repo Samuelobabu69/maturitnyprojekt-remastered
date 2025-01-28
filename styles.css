@@ -110,7 +110,6 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
 }
 
 .login {
-    display: none;
     flex-direction: column;
     width: 100%;
     height: 100vh;
@@ -140,7 +139,7 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
     height: 3px;
 }
 
-#access-password {
+#access-password-login-input {
     width: 100%;
     height: 25px;
     background: transparent;
@@ -149,7 +148,7 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
     color: var(--colortext);
 }
 
-#access-password:focus {
+#access-password-login-input:focus {
     outline: none;
 }
 
@@ -166,7 +165,7 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
 
 .connect-btn {
     background-color: transparent;
-    border: 4px solid var(--colortext);
+    border: 5px solid var(--colortext);
     border-top: none;
     border-right: none;
     border-radius: 50px;
@@ -174,10 +173,14 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
     width: 150px;
     color: var(--colortext);
     font-size: larger;
-    margin-bottom: 100px;
     margin-top: 25px;
+    transition: border 0.1s;
 }
 
+.login-error {
+    color: white;
+    font-size: larger;
+}
 
 .control {
     display: none;
@@ -311,6 +314,56 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
     font-size: x-large;
     font-family: "Tilt Neon", sans-serif;
     user-select: none;
+}
+
+.power-button, .power-close-button {
+    position: absolute;
+    bottom: 265px;
+    left: 50%;
+    width: 20%;
+    height: 70px;
+    transition: bottom 0.3s;
+    transform: translateX(-50%);
+}
+
+.power-close-button {
+    bottom: 190px;
+}
+
+.power-button img, .power-close-button img {
+    max-width: 70%;
+    max-height: 80%;
+}
+
+.power-menu-wrapper {
+    position: absolute;
+    width: 100%;
+    height: 15%;
+    bottom: 0%;
+    transition: bottom 0.3s;
+}
+
+.power-menu {
+    height: 100%;
+    width: 60%;
+    border: 2px solid white;
+    border-radius: 20px;
+    justify-content: space-evenly;
+}
+
+#power-button {
+    width: 10vh;
+    height: 10vh;
+    border: 5px solid var(--colortext);
+    border-top: none;
+    border-right: none;
+    border-radius: 50%;
+    transition: border 0.1s;
+}
+
+#power-button img {
+    max-width: 70%;
+    max-height: 70%;
 }
 
 .keyboard-to-mousepad-switch, .mousepad-to-keyboard-switch {

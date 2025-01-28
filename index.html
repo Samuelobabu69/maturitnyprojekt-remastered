@@ -36,22 +36,35 @@
         <img class="logo-img" src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/logo.png?raw=true">
         <div class="d-flex password-input">
             <div class="password-wrapper">
-                <input type="password" id="access-password" placeholder="Password">
+                <input type="password" id="access-password-login-input" placeholder="Password">
             </div>
             <button class="show-password-btn">
                 <img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/hide-icon.png?raw=true">
             </button>
         </div>
         <button class="connect-btn">Connect</button>
+        <p class="login-error"></p>
     </div>
 
-    <div class="d-flex control" style="display: flex;">
+    <div class="d-flex control">
         <div class="d-flex video">
             <p class="video-disabled">Video is disabled. You can enable it in the settings.</p>
         </div>
         <div class="d-flex settings-button"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/settings.png?raw=true"></div>
+        <div class="d-flex power-button"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/power-icon.png?raw=true"></div>
+        <div class="d-flex power-close-button"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/close.png?raw=true"></div>
         <div class="d-flex mousepad-to-keyboard-switch"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/keyboard.png?raw=true"></div>
         <div class="d-flex keyboard-to-mousepad-switch"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/mouse.png?raw=true"></div>
+        <div class="d-flex power-menu-wrapper">
+            <div class="d-flex power-menu">
+                <div class="d-flex" id="power-button">
+                    <img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/power-icon.png?raw=true">
+                </div>
+                <div class="power-state">
+                    State: <span>on</span>
+                </div>
+            </div>
+        </div>
         <div class="d-flex mousepad">
             <div class="d-flex mousepad-border">
                 Touchpad

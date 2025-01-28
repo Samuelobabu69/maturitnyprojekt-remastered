@@ -1,0 +1,18 @@
+esc
+f1-f12
+print screen
+scroll lock
+pause break
+insert
+delete
+home
+end 
+page up 
+page down 
+numlock
+tab 
+caps lock
+ctrl 
+alt 
+alt gr 
+windows 

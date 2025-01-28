@@ -27,8 +27,8 @@ password = ""
 
 root = Tk()
 
-root.title("Easy Remote")
-root.iconbitmap("assets/easy-remote.ico")
+root.title("Simple Remote")
+root.iconbitmap("assets/simple-remote.ico")
 root.geometry("340x100")
 
 tk_row1 = 10

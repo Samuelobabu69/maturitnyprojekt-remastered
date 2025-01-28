@@ -1,12 +1,20 @@
 $(document).ready(() => {
 
-    async function request (method, data, type) {
+    async function request (method, type, data, target) {
 
         // This function is used to send a POST request to the server/app
 
-        let message = {data: data, type: type}
+        if (target == "pc") {
+            target = computerIp
+        }
+        
+        if (target == "mc") {
+            target = serverIp
+        }
+
+        let message = {type: type, data: data}
     
-        let something = await fetch(`http://${target}:5000`, {
+        let something = await fetch(`http://${target}:80`, {
             method: method,
             headers: {
                 "Content-Type": "application/json"
@@ -19,6 +27,23 @@ $(document).ready(() => {
         return something;
     }
 
+    function inactiveLogout () {
+
+        // A timer that forces the client to disconnect after 60s of inactivity
+
+        clearTimeout(logoutTimeout);
+        logoutTimeout = setTimeout(() => {
+            request("POST", "disconnect", "None", "mc");
+            loginScreen.css("display", "flex");
+            controlScreen.css("display", "none");
+            $(document).off("touchstart", inactiveLogout);
+            $(document).off("touchmove", inactiveLogout);
+            $(document).off("touchend", inactiveLogout);
+            loginError.text("Disconnected for inactivity.")
+            settingsHidden = true;
+            settingsScreen.css("left", "-100vw");
+        }, 5000);
+    }
     
 
     
@@ -53,14 +78,149 @@ $(document).ready(() => {
         })
     }
     
-
-
-
-    const showPasswordBtn = $(".show-password-btn");
-    const showPasswordBtnImg = $(".show-password-btn img");
-    const accessPasswordInput = $("#access-password");
+    $(window).on("beforeunload", () => {
+        request("POST", "disconnect", "None", "mc");
+    })
 
     
+
+
+
+    
+    /// Login ///
+    
+    const showPasswordBtn = $(".show-password-btn");
+    const showPasswordBtnImg = $(".show-password-btn img");
+    const accessPasswordLoginInput = $("#access-password-login-input");
+    const connectButton = $(".connect-btn");
+    const loginScreen = $(".login");
+    const controlScreen = $(".control");
+    const loginError = $(".login-error");
+
+    let logoutTimeout;
+    
+    // This SERVER_IP string is replaced by the server with
+    // it's actual IP address
+    let serverIp = "SERVER_IP";
+
+    // This COMPUTER_IP string is replaced by the server with
+    // the IP address of the computer
+    let computerIp = "COMPUTER_IP";
+    
+    // Button to show/hide password on the login page
+    showPasswordBtn.click(() => {
+        if (accessPasswordLoginInput.attr("type") === "password") {
+            accessPasswordLoginInput.attr("type", "text");
+            showPasswordBtnImg.attr("src", "https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/show-icon.png?raw=true");
+        } else {
+            accessPasswordLoginInput.attr("type", "password");
+            showPasswordBtnImg.attr("src", "https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/hide-icon.png?raw=true");
+        }
+
+        accessPasswordLoginInput.focus();
+
+    })
+
+    connectButton.click(async () => {
+        connectButton.prop("disabled", true);
+        connectButton.css({
+            "border": "3px solid var(--colortext)",
+            "border-top": "2px solid var(--colortext)",
+            "border-right": "2px solid var(--colortext)"
+        });
+        loginError.text("")
+
+        let password = accessPasswordLoginInput.val();
+        let response;
+
+        let ttl = new Promise((_, reject) => {
+            setTimeout(() => reject("ttlReached"), 7000)
+        })
+
+        try {
+            response = await Promise.race([request("POST", "accessAttempt", password, "mc"), ttl])
+        } catch (error) {
+            response = error
+        }
+
+        console.log(response);
+
+        if (response == "accessGranted") {
+            loginScreen.css("display", "none");
+            controlScreen.css("display", "block");
+
+            inactiveLogout()
+            $(document).on("touchstart touchmove touchend", inactiveLogout);
+
+        } else if (response == "accessDenied") {
+            loginError.text("Incorrect password");
+        } else if (response == "occupied") {
+            loginError.text("Device is occupied");
+        } else if (response == "ttlReached") {
+            loginError.text("TTL reached");
+        } else {
+            loginError.text("Unknown error");
+        }
+
+        connectButton.prop("disabled", false);
+        connectButton.css({
+            "border": "5px solid var(--colortext)",
+            "border-top": "none",
+            "border-right": "none"
+        });
+
+    })
+
+    /// Power Button ///
+
+    const powerButtonOpen = $(".power-button");
+    const powerButtonClose = $(".power-close-button");
+    const powerMenu = $(".power-menu-wrapper");
+    const powerButton = $("#power-button");
+    let powerMenuHidden = true;
+    
+    powerButtonOpen.on("touchstart", () => {
+        if (powerMenuHidden) {
+            powerMenuHidden = false;
+            powerMenu.css("bottom", "350px");
+            powerButtonOpen.css("bottom", "190px");
+            powerButtonClose.css("bottom", "265px")
+        } 
+    });
+
+    powerButtonClose.on("touchstart", () => {
+        if (!powerMenuHidden) {
+            powerMenuHidden = true;
+            powerMenu.css("bottom", "0");
+            powerButtonClose.css("bottom", "190px");
+            powerButtonOpen.css("bottom", "265px")
+        } 
+    });
+
+    powerButton.on('contextmenu touchstart', (e) => {
+        e.preventDefault(); 
+    })
+
+    powerButton.on("touchstart", () => {
+        request("POST", "powerButton", "press", "pc");
+        
+        powerButton.css({
+            "border": "3px solid var(--colortext)",
+            "border-top": "2px solid var(--colortext)",
+            "border-right": "2px solid var(--colortext)"
+        });
+    })
+
+    powerButton.on("touchend", () => {
+        request("POST", "powerButton", "release", "pc");
+        
+        powerButton.css({
+            "border": "5px solid var(--colortext)",
+            "border-top": "none",
+            "border-right": "none"
+        });
+    })
+
     
 
     /// Mousepad ///
@@ -191,20 +351,6 @@ $(document).ready(() => {
         return false;
     }
 
-    // Button to show/hide password on the login page
-    showPasswordBtn.click(() => {
-        if (accessPasswordInput.attr("type") === "password") {
-            accessPasswordInput.attr("type", "text");
-            showPasswordBtnImg.attr("src", "assets/show-icon.png");
-        } else {
-            accessPasswordInput.attr("type", "password");
-            showPasswordBtnImg.attr("src", "assets/hide-icon.png");
-        }
-
-        accessPasswordInput.focus();
-
-    })
-
     // Keyboard keys
     for (let index = 0; index < aftertapKeys.length; index++) {
         const key = aftertapKeys.eq(index);
@@ -333,6 +479,7 @@ $(document).ready(() => {
 
 
             // TODO: character sending
+            request("POST", "keyPress", keyToSend, "pc")
             console.log(keyToSend)
 
             typingAlternate = false;
@@ -359,7 +506,7 @@ $(document).ready(() => {
         key.on("touchend", () => {
             if (shiftState == 1) {
                 shiftState = 0;
-                shiftKeyImg.attr("src", "assets/lower-case.png");
+                shiftKeyImg.attr("src", "https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/lower-case.png?raw=true");
                 for (let index = 0; index < shiftAffectedKeys.length; index++) {
                     const key = shiftAffectedKeys.eq(index);
                     key.text(key.text().toLowerCase())  
@@ -398,21 +545,21 @@ $(document).ready(() => {
         }
 
         if (shiftState == 0) {
-            shiftKeyImg.attr("src", "assets/lower-case.png");
+            shiftKeyImg.attr("src", "https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/lower-case.png?raw=true");
             for (let index = 0; index < shiftAffectedKeys.length; index++) {
                 const key = shiftAffectedKeys.eq(index);
         
                 key.text(key.text().toLowerCase())
             }
         } else if (shiftState == 1) {
-            shiftKeyImg.attr("src", "assets/upper-case.png");
+            shiftKeyImg.attr("src", "https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/upper-case.png?raw=true");
             for (let index = 0; index < shiftAffectedKeys.length; index++) {
                 const key = shiftAffectedKeys.eq(index);
         
                 key.text(key.text().toUpperCase())
             }
         } else if (shiftState == 2) {
-            shiftKeyImg.attr("src", "assets/caps-lock.png");
+            shiftKeyImg.attr("src", "https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/caps-lock.png?raw=true");
         }
 
         
