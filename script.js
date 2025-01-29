@@ -1,3 +1,5 @@
+// Version 1
+
 $(document).ready(() => {
 
     async function request (method, type, data, target) {
@@ -21,10 +23,17 @@ $(document).ready(() => {
             },
             body: JSON.stringify(message)
         })
-        .then(response => JSON.parse(response.text()))
+        .then(response => response.text())
         .catch(error => error);
-        
-        return response;
+
+        try {
+            return JSON.parse(response);
+        }
+        catch {
+            return response;
+        }
+
+
     }
 
     function inactiveLogout () {
