@@ -229,6 +229,7 @@ $(document).ready(() => {
 
     const mousepad = $(".mousepad");
     let mousepadPostOnCooldown = false;
+    let mouseMoved = false;
     let initialX, initialY, mouseSensitivity, mouseUpdateInterval;
 
     mousepad.on("touchstart", (event) => {
@@ -241,6 +242,7 @@ $(document).ready(() => {
     });
 
     mousepad.on("touchmove", (event) => {
+        mouseMoved = true
         let touch = event.originalEvent.touches[0];
         let x = Math.floor(touch.clientX - initialX) * mouseSensitivity;
         let y = Math.floor(touch.clientY - initialY) * mouseSensitivity;
@@ -257,12 +259,9 @@ $(document).ready(() => {
         }
     });
 
-    mousepad.on("touchend", (event) => {
-        let touch = event.originalEvent.touches[0];
-        let x = touch.clientX;
-        let y = touch.clientY;
-
-        if (initialX == x && initialY == y) {
+    mousepad.on("touchend", () => {
+        if (mouseMoved) {
+            mouseMoved = false
             request("POST", "mouseClick", "none", "pc")
         }
     });

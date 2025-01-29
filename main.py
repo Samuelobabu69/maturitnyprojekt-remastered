@@ -90,6 +90,12 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(204, "No Content")
             self.end_headers()
 
+        elif data["type"] == "mouseClick":
+            pag.click()
+
+            self.send_response(204, "No Content")
+            self.end_headers()
+
         if response:
             self.wfile.write(str(response).replace("'", '"').encode('utf-8'))  # Send JSON response
 
