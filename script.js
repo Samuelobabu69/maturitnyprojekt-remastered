@@ -229,8 +229,7 @@ $(document).ready(() => {
 
     const mousepad = $(".mousepad");
     let mousepadPostOnCooldown = false;
-    let mouseUpdateInterval = 50;
-    let initialX, initialY, mouseSensitivity;
+    let initialX, initialY, mouseSensitivity, mouseUpdateInterval;
 
     mousepad.on("touchstart", (event) => {
         let touch = event.originalEvent.touches[0];
@@ -676,6 +675,7 @@ $(document).ready(() => {
     const keyboardLetterSizeInput = $("#keyboard-letter-size");
     const mouseSensitivityInput = $("#mouse-sensitivity");
     const mouseSensitivityOutput = $(".mouse-sensitivity-output");
+    const mouseUpdateIntervalInput = $("#mouse-update-interval");
     const videoEnabledInput = $("#video-enabled");
     const videoDisabledOutput = $(".video-disabled");
     const videoQualityInput = $("#video-quality");
@@ -687,15 +687,18 @@ $(document).ready(() => {
 
 
     function saveLocalSettings () {
+        /** Saves settings to local storage */
         localStorage.setItem("settings", JSON.stringify(settings))
     }
 
     function applyLocalSettings () {
+        /** Applies settings, so that they actually work. */
         bgMoving.css("animation-play-state", settings["animated-background"]);
         document.documentElement.style.setProperty('--colorbg1', settings["background-color-1"]);
         document.documentElement.style.setProperty('--colorbg2', settings["background-color-2"]);
         document.documentElement.style.setProperty('--colortext', settings["text-color"]);
         mouseSensitivity = (Number(settings["mouse-sensitivity"]) / 100).toFixed(1)
+        mouseUpdateInterval = Number(settings["mouse-update-interval"])
         if (settings["keyboard-letter-size"] == "large") {
             keyboardKeys.css("font-size", "xx-large")
         } else if (settings["keyboard-letter-size"] == "medium") {
@@ -728,6 +731,7 @@ $(document).ready(() => {
     }
 
     function showLocalSettings () {
+        /** Applies and shows the settings in the settings tab. */
         if (settings["animated-background"] == "running") {
             animatedBackgroundSwitch.prop("checked", true);
         } else {
@@ -765,12 +769,14 @@ $(document).ready(() => {
     }
 
     function resetLocalSettings () {
+        /** Resets the setings to the default settings. */
         localStorage.setItem("settings", JSON.stringify(defaultSettings));
         settings = JSON.parse(localStorage.getItem("settings"));
         showLocalSettings();
     }
 
     function revertLocalSettings () {
+        /** Reverts settings to last saved settings. */
         settings = JSON.parse(localStorage.getItem("settings"));
         showLocalSettings();
     }
@@ -852,6 +858,10 @@ $(document).ready(() => {
         settings["mouse-sensitivity"] = mouseSensitivityInput.val();
         applyLocalSettings();
     });
+    mouseUpdateIntervalInput.change(() => {
+        settings["mouse-update-interval"] = Number(mouseUpdateIntervalInput.val())
+        applyLocalSettings();
+    })
     videoEnabledInput.change(() => {
         settings["video-enabled"] = videoEnabledInput.prop("checked") + "";
         applyLocalSettings();
