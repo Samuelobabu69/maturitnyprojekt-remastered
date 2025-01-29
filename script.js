@@ -260,7 +260,7 @@ $(document).ready(() => {
     });
 
     mousepad.on("touchend", () => {
-        if (mouseMoved) {
+        if (!mouseMoved) {
             mouseMoved = false
             request("POST", "mouseClick", "none", "pc")
         }
