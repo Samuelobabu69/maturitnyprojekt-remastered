@@ -257,8 +257,14 @@ $(document).ready(() => {
         }
     });
 
-    mousepad.on("touchend", () => {
-        
+    mousepad.on("touchend", (event) => {
+        let touch = event.originalEvent.touches[0];
+        let x = touch.clientX;
+        let y = touch.clientY;
+
+        if (initialX == x && initialY == y) {
+            request("POST", "mouseClick", "none", "pc")
+        }
     });
 
     const keyboard = $(".keyboard");
