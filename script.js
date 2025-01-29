@@ -495,6 +495,35 @@ $(document).ready(() => {
         
     }
 
+    // Special keys
+    const spaceKeys = $(".space-key");
+    const backspaceKeys = $(".backspace-key");
+    const enterKeys = $(".enter-key");
+
+    for (let index = 0; index < spaceKeys.length; index++) {
+        const key = spaceKeys.eq(index);
+
+        key.on("touchend", () => {
+            request("POST", "hotkeyPress", "space", "pc");
+        });
+    }
+
+    for (let index = 0; index < backspaceKeys.length; index++) {
+        const key = backspaceKeys.eq(index);
+
+        key.on("touchend", () => {
+            request("POST", "hotkeyPress", "backspace", "pc");
+        });
+    }
+
+    for (let index = 0; index < enterKeys.length; index++) {
+        const key = enterKeys.eq(index);
+
+        key.on("touchend", () => {
+            request("POST", "hotkeyPress", "enter", "pc");
+        });
+    }
+
     // Preventing the menu from showing up after
     // holding on a key with an image.
     for (let index = 0; index < keyboardKeys.length; index++) {
