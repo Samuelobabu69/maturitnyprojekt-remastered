@@ -684,7 +684,7 @@ $(document).ready(() => {
         "keyboard-layout": "qwertz",
         "keyboard-letter-size": "medium",
         "mouse-sensitivity": "100",
-        "mouse-update-interval": "50",
+        "mouse-update-interval": "100",
         "video-enabled": "true",
         "video-quality": "medium",
         "video-fps": "10"
@@ -786,6 +786,7 @@ $(document).ready(() => {
         }
         
         mouseSensitivityOutput.css("margin-left", mouseSensitivityOutputLeftMargin + "%");
+        mouseUpdateIntervalInput.val(settings["mouse-update-interval"]);
         if (settings["video-enabled"] === "true") {
             videoEnabledInput.prop("checked", true)
         } else {
