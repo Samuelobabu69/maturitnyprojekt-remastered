@@ -90,8 +90,11 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(204, "No Content")
             self.end_headers()
 
-        elif data["type"] == "mouseClick":
-            pag.click()
+        elif data["type"] == "mouseUp":
+
+            currentX, currentY = pag.position()
+            if currentX == initialX and currentY == initialY:
+                pag.click()
 
             self.send_response(204, "No Content")
             self.end_headers()
