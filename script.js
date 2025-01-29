@@ -1,4 +1,4 @@
-// Version 1
+// Version 2
 
 $(document).ready(() => {
 
@@ -236,6 +236,9 @@ $(document).ready(() => {
         let touch = event.originalEvent.touches[0];
         initialX = touch.clientX;
         initialY = touch.clientY;
+
+        request("POST", "mouseDown", "none", "pc")
+
     });
 
     mousepad.on("touchmove", (event) => {
@@ -244,10 +247,14 @@ $(document).ready(() => {
         let y = Math.floor(touch.clientY - initialY) * mouseSensitivity;
         if (mousepadPostOnCooldown === false) {
             mousepadPostOnCooldown = true;
+
+            request("POST", "mouseMove", `${x} ${y}`, "pc")
             console.log(`${x}/${y}`);
+
             setTimeout(() => {
                 mousepadPostOnCooldown = false;
             }, mouseUpdateInterval);
+            
         }
     });
 
@@ -478,7 +485,6 @@ $(document).ready(() => {
             if (shiftState != 0) {
                 keyToSend = keyToSend.toUpperCase();
             }
-
 
             // TODO: character sending
             request("POST", "keyPress", keyToSend, "pc")

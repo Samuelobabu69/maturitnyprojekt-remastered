@@ -1,12 +1,20 @@
 from ttkbootstrap import *
 from ttkbootstrap.constants import *
 from functools import partial
-import serial.tools.list_ports, time, serial, threading, json, os, winshell, pystray, socket, http.server, socketserver
+import serial.tools.list_ports, time, serial, threading, json, os, winshell, pystray, socket, http.server, socketserver, pyperclip
 import pyautogui as pag
+
+pag.FAILSAFE = False
 
 CORSOrigins = []
 
 class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
+
+    def __init__(self, request, client_address, server, *, directory = None):
+
+        self.initialX, self.initialY = None, None
+
+        super().__init__(request, client_address, server, directory=directory)
 
     # Add CORS headers to all responses
     def end_headers(self):
@@ -50,14 +58,33 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.end_headers()
 
         elif data["type"] == "screen":
-            pass
+
+            self.send_response(204, "No Content")
+            self.end_headers()
 
         elif data["type"] == "keyPress":
-            pag.press(data["data"])
+            pyperclip.copy(data["data"])
+            pag.hotkey("ctrl", "v")
 
-        elif data["type"] == "mouse":
-            pass
+            self.send_response(204, "No Content")
+            self.end_headers()
 
+        elif data["type"] == "mouseDown":
+
+            self.initialX, self.initialY = pag.position()
+
+            self.send_response(204, "No Content")
+            self.end_headers()
+
+        elif data["type"] == "mouseMove":
+
+            relativeX, relativeY = data["data"].split()
+            relativeX, relativeY = int(relativeX), int(relativeY)
+
+            pag.moveTo(self.initialX + relativeX, self.initialY + relativeY)
+
+            self.send_response(204, "No Content")
+            self.end_headers()
 
         if response:
             self.wfile.write(str(response).replace("'", '"').encode('utf-8'))  # Send JSON response
