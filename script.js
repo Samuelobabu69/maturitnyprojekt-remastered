@@ -5,7 +5,7 @@ $(document).ready(() => {
         // This function is used to send a POST request to the server/controller
 
         if (target == "pc") {
-            target = `http://${computerIp}:80`
+            target = `http://${computerIp}:65432`
         }
         
         if (target == "mc") {
@@ -14,17 +14,17 @@ $(document).ready(() => {
 
         let message = {type: type, data: data}
     
-        let something = await fetch(target, {
+        let response = await fetch(target, {
             method: method,
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(message)
         })
-        .then(response => response.text())
+        .then(response => JSON.parse(response.text()))
         .catch(error => error);
-
-        return JSON.parse(something);
+        
+        return response;
     }
 
     function inactiveLogout () {
