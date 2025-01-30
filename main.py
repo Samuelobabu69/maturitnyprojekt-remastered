@@ -1,7 +1,7 @@
 from ttkbootstrap import *
 from ttkbootstrap.constants import *
 from functools import partial
-import serial.tools.list_ports, time, serial, threading, json, os, winshell, pystray, socket, http.server, socketserver, pyperclip
+import serial.tools.list_ports, time, serial, threading, json, os, winshell, pystray, socket, http.server, socketserver, pyperclip, io, base64
 import pyautogui as pag
 
 pag.FAILSAFE = False
@@ -98,16 +98,33 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(204, "No Content")
             self.end_headers()
 
-        if response:
-            self.wfile.write(str(response).replace("'", '"').encode('utf-8'))  # Send JSON response
+        elif data["type"] == "screenshare":
+            screenshot = pag.screenshot()
+
+            cursor_x, cursor_y = pag.position()
+            cursor_image = Image.open("assets/cursor_mod.png")
+            screenshot.paste(cursor_image, (cursor_x, cursor_y), cursor_image)
+            
+            screenshot_bytes = io.BytesIO()
+            screenshot.thumbnail((800, 800))
+            screenshot.save(screenshot_bytes, format="PNG")
+            response = base64.b64encode(screenshot_bytes.getvalue()).decode('utf-8')
+
+            self.send_response(200, "OK")
+            self.end_headers()
+
+        if not response:
+            response = {}
+
+        self.wfile.write(str(response).replace("'", '"').encode('utf-8'))  # Send JSON response
 
     def do_GET(self):
         content_length = int(self.headers['Content-Length'])  # Get length of the request body
         get_data = self.rfile.read(content_length)  # Read the request body      
 
-        # Decode and log the POST data
-        received_data = get_data.decode('utf-8')
-        print("GET request received with data:", received_data)
+        data = json.loads(get_data.decode('utf-8'))
+
+
 
 
 def listComPorts():
@@ -706,8 +723,8 @@ class App:
             print("Server already running. Restarting...")
             self.stateOff()
         print("Turning on...")
-        CORSOrigins.clear()
-        CORSOrigins.append(self.settings["controllerIp"])
+        if self.settings["controllerIp"] not in CORSOrigins:
+            CORSOrigins.append(self.settings["controllerIp"])
         self.serverThread = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.serverThread.start()
         print(f"Listening on IP {socket.gethostbyname(socket.gethostname())} on port {self.serverPort}")

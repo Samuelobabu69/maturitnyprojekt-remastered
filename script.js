@@ -708,6 +708,7 @@ $(document).ready(() => {
     const mouseSensitivityOutput = $(".mouse-sensitivity-output");
     const mouseUpdateIntervalInput = $("#mouse-update-interval");
     const video = $(".video")
+    const videoImg = $(".video-img");
     const videoEnabledInput = $("#video-enabled");
     const videoDisabledOutput = $(".video-disabled");
     const videoQualityInput = $("#video-quality");
@@ -720,12 +721,9 @@ $(document).ready(() => {
 
     async function screenshare() {
         videoDisabledOutput.css("display", "none");
-        let screenshot_bytes =  await request("GET", "screenshare", "none", "pc");
+        let screenshot_bytes =  await request("POST", "screenshare", "none", "pc");
         console.log(screenshot_bytes)
-        let img = new Image();
-        img.src = "data:image/png;base64," + screenshot_bytes;
-        video.empty();
-        video.append(img);
+        videoImg.attr("src", "data:image/png;base64," + screenshot_bytes);
     }
 
 
@@ -767,8 +765,10 @@ $(document).ready(() => {
 
         if (settings["video-enabled"] === "true") {
             screenshare();
+            videoDisabledOutput.css("display", "none");
         } else {
             videoDisabledOutput.css("display", "flex");
+            videoImg.attr("src", "https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/black.jpg?raw=true")
         }
 
     }
