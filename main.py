@@ -70,7 +70,6 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(204, "No Content")
             self.end_headers()
 
-
         elif data["type"] == "mouseDown":
 
             global initialX, initialY
@@ -83,7 +82,7 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
         elif data["type"] == "mouseMove":
 
             relativeX, relativeY = data["data"].split()
-            relativeX, relativeY = int(relativeX), int(relativeY)
+            relativeX, relativeY = int(float(relativeX)), int(float(relativeY))
 
             pag.moveTo(initialX + relativeX, initialY + relativeY)
 

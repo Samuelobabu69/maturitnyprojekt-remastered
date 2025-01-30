@@ -204,7 +204,7 @@ $(document).ready(() => {
     })
 
     powerButton.on("touchstart", () => {
-        request("POST", "powerButton", "press", "pc");
+        request("POST", "powerButton", "press", "mc");
         
         powerButton.css({
             "border": "3px solid var(--colortext)",
@@ -214,7 +214,7 @@ $(document).ready(() => {
     })
 
     powerButton.on("touchend", () => {
-        request("POST", "powerButton", "release", "pc");
+        request("POST", "powerButton", "release", "mc");
         
         powerButton.css({
             "border": "5px solid var(--colortext)",
