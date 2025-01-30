@@ -707,6 +707,7 @@ $(document).ready(() => {
     const mouseSensitivityInput = $("#mouse-sensitivity");
     const mouseSensitivityOutput = $(".mouse-sensitivity-output");
     const mouseUpdateIntervalInput = $("#mouse-update-interval");
+    const video = $(".video")
     const videoEnabledInput = $("#video-enabled");
     const videoDisabledOutput = $(".video-disabled");
     const videoQualityInput = $("#video-quality");
@@ -755,6 +756,12 @@ $(document).ready(() => {
 
         if (settings["video-enabled"] === "true") {
             videoDisabledOutput.css("display", "none");
+            let screenshot_bytes = request("GET", "screenshare", "none", "pc");
+            console.log(screenshot_bytes)
+            let img = new Image();
+            img.src = "data:image/png;base64," + screenshot_bytes;
+            video.empty();
+            video.append(img);
         } else {
             videoDisabledOutput.css("display", "flex");
         }
