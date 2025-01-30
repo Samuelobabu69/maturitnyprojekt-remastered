@@ -718,6 +718,17 @@ $(document).ready(() => {
     const resetLocalSettingsBtns = $(".reset-local-settings-btn");
 
 
+    async function screenshare() {
+        videoDisabledOutput.css("display", "none");
+        let screenshot_bytes =  await request("GET", "screenshare", "none", "pc");
+        console.log(screenshot_bytes)
+        let img = new Image();
+        img.src = "data:image/png;base64," + screenshot_bytes;
+        video.empty();
+        video.append(img);
+    }
+
+
     function saveLocalSettings () {
         /** Saves settings to local storage */
         localStorage.setItem("settings", JSON.stringify(settings))
@@ -755,13 +766,7 @@ $(document).ready(() => {
         }
 
         if (settings["video-enabled"] === "true") {
-            videoDisabledOutput.css("display", "none");
-            let screenshot_bytes = request("GET", "screenshare", "none", "pc");
-            console.log(screenshot_bytes)
-            let img = new Image();
-            img.src = "data:image/png;base64," + screenshot_bytes;
-            video.empty();
-            video.append(img);
+            screenshare();
         } else {
             videoDisabledOutput.css("display", "flex");
         }
