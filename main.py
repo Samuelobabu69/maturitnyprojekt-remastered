@@ -8,6 +8,7 @@ pag.FAILSAFE = False
 
 CORSOrigins = []
 initialX, initialY = None, None
+screenshareQuality = 800
 
 class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
 
@@ -99,6 +100,7 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
 
         elif data["type"] == "screenshare":
+
             screenshot = pag.screenshot()
 
             cursor_x, cursor_y = pag.position()
@@ -106,11 +108,25 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
             screenshot.paste(cursor_image, (cursor_x, cursor_y), cursor_image)
             
             screenshot_bytes = io.BytesIO()
-            screenshot.thumbnail((800, 800))
+            screenshot.thumbnail((screenshareQuality, screenshareQuality))
             screenshot.save(screenshot_bytes, format="PNG")
             response = base64.b64encode(screenshot_bytes.getvalue()).decode('utf-8')
 
             self.send_response(200, "OK")
+            self.end_headers()
+
+        elif data["type"] == "screenshareQuality":
+
+            global screenshareQuality
+
+            if data["data"] == "high":
+                screenshareQuality = 1200
+            elif data["data"] == "medium":
+                screenshareQuality = 800
+            elif data["data"] == "low":
+                screenshareQuality = 400
+
+            self.send_response(204, "No Content")
             self.end_headers()
 
         if not response:

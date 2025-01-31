@@ -42,17 +42,24 @@ $(document).ready(() => {
 
         clearTimeout(logoutTimeout);
         logoutTimeout = setTimeout(() => {
-            request("POST", "disconnect", "None", "mc");
-            loginScreen.css("display", "flex");
-            controlScreen.css("display", "none");
-            $(document).off("touchstart", inactiveLogout);
-            $(document).off("touchmove", inactiveLogout);
-            $(document).off("touchend", inactiveLogout);
-            loginError.text("Disconnected for inactivity.")
-            settingsHidden = true;
-            settingsScreen.css("left", "-100vw");
+            logout()
         }, 60000);
     }
+
+    function logout () {
+        loggedIn = false;
+        settingsHidden = true;
+        request("POST", "disconnect", "None", "mc");
+        loginScreen.css("display", "flex");
+        controlScreen.css("display", "none");
+        $(document).off("touchstart", inactiveLogout);
+        $(document).off("touchmove", inactiveLogout);
+        $(document).off("touchend", inactiveLogout);
+        loginError.text("Disconnected for inactivity.");
+        settingsScreen.css("left", "-100vw");
+    }
+
+
     
 
     
@@ -107,6 +114,7 @@ $(document).ready(() => {
     const loginError = $(".login-error");
 
     let logoutTimeout, computerIp;
+    let loggedIn = false;
     
     // Button to show/hide password on the login page
     showPasswordBtn.click(() => {
@@ -147,6 +155,7 @@ $(document).ready(() => {
         console.log(response);
 
         if (response["type"] == "accessGranted") {
+            loggedIn = true
             computerIp = response["data"]
             loginScreen.css("display", "none");
             controlScreen.css("display", "block");
@@ -707,7 +716,6 @@ $(document).ready(() => {
     const mouseSensitivityInput = $("#mouse-sensitivity");
     const mouseSensitivityOutput = $(".mouse-sensitivity-output");
     const mouseUpdateIntervalInput = $("#mouse-update-interval");
-    const video = $(".video")
     const videoImg = $(".video-img");
     const videoEnabledInput = $("#video-enabled");
     const videoDisabledOutput = $(".video-disabled");
@@ -719,11 +727,20 @@ $(document).ready(() => {
     const resetLocalSettingsBtns = $(".reset-local-settings-btn");
 
 
-    async function screenshare() {
-        videoDisabledOutput.css("display", "none");
-        let screenshot_bytes =  await request("POST", "screenshare", "none", "pc");
-        console.log(screenshot_bytes)
-        videoImg.attr("src", "data:image/png;base64," + screenshot_bytes);
+    let screenshareInterval;
+
+    function screenshare() {
+        request("POST", "screenshareQuality", settings["video-quality"])
+        clearInterval(screenshareInterval);
+        screenshareInterval = setInterval(async () => {
+            if (loggedIn) {
+                videoDisabledOutput.css("display", "none");
+                let screenshot_bytes =  await request("POST", "screenshare", "none", "pc");
+                console.log(screenshot_bytes)
+                videoImg.attr("src", "data:image/png;base64," + screenshot_bytes);
+            }
+        }, Number(settings["video-fps"]));
+        
     }
 
 
@@ -767,6 +784,7 @@ $(document).ready(() => {
             screenshare();
             videoDisabledOutput.css("display", "none");
         } else {
+            clearInterval(screenshareInterval)
             videoDisabledOutput.css("display", "flex");
             videoImg.attr("src", "https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/black.jpg?raw=true")
         }
@@ -913,10 +931,12 @@ $(document).ready(() => {
     videoQualityInput.change(() => {
         settings["video-quality"] = videoQualityInput.val();
         applyLocalSettings();
+        screenshare();
     });
     videoFpsInput.change(() => {
         settings["video-fps"] = videoFpsInput.val();
         applyLocalSettings();
+        screenshare();
     })
 
     

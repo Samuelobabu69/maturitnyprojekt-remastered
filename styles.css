@@ -204,6 +204,10 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
     max-height: 100%;
 }
 
+.video-disabled {
+    z-index: 1;
+}
+
 .keyboard {
     position: absolute;
     bottom: -260px;
