@@ -6,13 +6,12 @@ import pyautogui as pag
 
 pag.FAILSAFE = False
 
-CORSOrigins = []
+CORSOrigins = ["http://127.0.0.1:5500"]
 initialX, initialY = None, None
 screenshareQuality = 800
 
 class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
 
-    # Add CORS headers to all responses
     def end_headers(self):
         origin = self.headers.get("Origin")
         if origin in CORSOrigins:
@@ -21,19 +20,19 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         super().end_headers()
 
-    # Handle OPTIONS HTTP method for preflight requests
     def do_OPTIONS(self):
         self.send_response(200, "OK")
         self.end_headers()
 
-    # Handle POST HTTP method
     def do_POST(self):
-        content_length = int(self.headers['Content-Length'])  # Get length of the request body
-        post_data = self.rfile.read(content_length)  # Read the request body 
+
+        global screenshareQuality
+        
+        content_length = int(self.headers['Content-Length'])  
+        post_data = self.rfile.read(content_length)  
 
         response = None     
 
-        # Decode and log the POST data
         data = json.loads(post_data.decode('utf-8'))
 
         print(data)
@@ -52,6 +51,10 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
             except ValueError:
                 self.send_response(404, "Not Found")
                 self.end_headers()
+
+        elif data["type"] == "stateCheck":
+            self.send_response(200, "OK")
+            self.end_headers()
 
         elif data["type"] == "screen":
 
@@ -86,6 +89,7 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
             relativeX, relativeY = int(float(relativeX)), int(float(relativeY))
 
             pag.moveTo(initialX + relativeX, initialY + relativeY)
+            print("moving")
 
             self.send_response(204, "No Content")
             self.end_headers()
@@ -117,8 +121,6 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
 
         elif data["type"] == "screenshareQuality":
 
-            global screenshareQuality
-
             if data["data"] == "high":
                 screenshareQuality = 1200
             elif data["data"] == "medium":
@@ -132,31 +134,7 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
         if not response:
             response = {}
 
-        self.wfile.write(str(response).replace("'", '"').encode('utf-8'))  # Send JSON response
-
-    def do_GET(self):
-        content_length = int(self.headers['Content-Length'])  # Get length of the request body
-        get_data = self.rfile.read(content_length)  # Read the request body      
-
-        data = json.loads(get_data.decode('utf-8'))
-
-
-
-
-def listComPorts():
-    # Get a list of all connected COM ports
-    ports = serial.tools.list_ports.comports()
-    
-    # Print information about each detected port
-    connected_ports = []
-    for port in ports:
-        connected_ports.append(port.name)
-
-    return connected_ports
-
-
-
-
+        self.wfile.write(str(response).replace("'", '"').encode('utf-8'))  
 
 
 
@@ -195,7 +173,7 @@ class App:
         self.thePort = None
         self.factoryReset = False
 
-        self.trayIconImage = Image.open("assets/logo.png")  # Replace this with your custom image
+        self.trayIconImage = Image.open("assets/logo.png")  
         self.trayIconMenu = pystray.Menu()
         self.trayIcon = pystray.Icon("SimpleRemote", self.trayIconImage, "Simple Remote", self.trayIconMenu)
         threading.Thread(target=self.trayIcon.run, daemon=True).start()
@@ -204,7 +182,7 @@ class App:
         self.server = socketserver.TCPServer(("", self.serverPort), CORSRequestHandler)
         self.serverThread = None
         
-    def checkSingleInstance(self, port=65432):
+    def checkSingleInstance(self, port=65433):
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -218,15 +196,16 @@ class App:
             return False
 
     def checkSecondInstance(self, lock):
-        try:
-            while True:
+        
+        while True:
+            try:
                 conn, _ = lock.accept()
                 message = conn.recv(1024).decode("utf-8")
                 if message == "INSTANCE_DETECTED":
                     self.showWindow()
                 conn.close()
-        except:
-            None
+            except:
+                None
 
     def saveSettings(self):
 
@@ -398,7 +377,7 @@ class App:
         while not self.threadEnd:
 
             if not self.thePort:
-                comPorts = listComPorts()
+                comPorts = self.listComPorts()
 
                 for port in comPorts:
                     try:
@@ -422,7 +401,7 @@ class App:
 
             else:
 
-                if self.thePort not in listComPorts():
+                if self.thePort not in self.listComPorts():
 
                     self.controllerSerialConn.close()
                     self.thePort = None
@@ -446,7 +425,15 @@ class App:
                         
             time.sleep(0.5)
 
+    def listComPorts(self):
 
+        ports = serial.tools.list_ports.comports()
+        
+        connected_ports = []
+        for port in ports:
+            connected_ports.append(port.name)
+
+        return connected_ports
 
 
     def clearScreen(self):
@@ -546,19 +533,22 @@ class App:
 
     
     def getWifiList(self):
-    
+
         response = self.IOtoController("WIFI_LIST")
+
         while not response:
             response = self.getResponseFromController()
-        print(f"'{response}'")
+
         response = json.loads(response)
         filter = []
         wifiListFiltered = []
+
         for wifi in response:
             if wifi[0] not in filter and wifi[0] != "":
                 filter.append(wifi[0])
                 wifiListFiltered.append(wifi)
         wifiListFiltered.sort()
+
         return wifiListFiltered
 
 

@@ -180,6 +180,8 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
 .login-error {
     color: white;
     font-size: larger;
+    max-width: 80%;
+    text-align: center;
 }
 
 .control {
@@ -206,6 +208,13 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
 
 .video-disabled {
     z-index: 1;
+}
+
+.states {
+    position: absolute;
+    top: 30%;
+    color: white;
+    margin-left: 16px;
 }
 
 .keyboard {
@@ -354,10 +363,6 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
 }
 
 .power-menu {
-    height: 100%;
-    width: 60%;
-    border: 2px solid white;
-    border-radius: 20px;
     justify-content: space-evenly;
 }
 
@@ -535,9 +540,21 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
     outline: none;
 }
 
+.setting button {
+    width: 40%;
+    height: 30px;
+    border: 2px solid white;
+    border-radius: 30px;
+    background-color: transparent;
+    color: white;
+}
+
 .local-settings-buttons {
     justify-content: space-evenly;
-    margin-left: 20%;
+    position: absolute;
+    bottom: 10%;
+    right: 0;
+    width: 80%;
 }
 
 .local-settings-buttons button {
@@ -554,6 +571,24 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
     align-items: start;
 }
 
+.rotate {
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    display: none;
+    color: white;
+    z-index: 101;
+}
+
+.rotate-blur {
+    position: absolute;
+    display: none;
+    height: 100vh;
+    width: 100%;
+    backdrop-filter: blur(0px);
+    transition: backdrop-filter 0.5s;
+    z-index: 100;
+}
 
 @keyframes bg-anim {
     0% {

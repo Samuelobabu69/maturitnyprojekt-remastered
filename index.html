@@ -51,6 +51,11 @@
             <img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/black.jpg?raw=true" class="video-img">
             <p class="video-disabled">Video is disabled. You can enable it in the settings.</p>
         </div>
+
+        <div class="d-flex states">
+            <p>SR Admin Panel: <span class="state-text">OFF</span></p>
+        </div>
+
         <div class="d-flex settings-button"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/settings.png?raw=true"></div>
         <div class="d-flex power-button"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/power-icon.png?raw=true"></div>
         <div class="d-flex power-close-button"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/close.png?raw=true"></div>
@@ -60,9 +65,6 @@
             <div class="d-flex power-menu">
                 <div class="d-flex" id="power-button">
                     <img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/power-icon.png?raw=true">
-                </div>
-                <div class="power-state">
-                    State: <span>on</span>
                 </div>
             </div>
         </div>
@@ -230,7 +232,7 @@
             <div class="d-flex settings-tab-btn" data-settings-tab-btn="0"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/accessibility.png?raw=true"></div>
             <div class="d-flex settings-tab-btn" data-settings-tab-btn="1"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/keyboard.png?raw=true"></div>
             <div class="d-flex settings-tab-btn" data-settings-tab-btn="2"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/screenshare.png?raw=true"></div>
-            <div class="d-flex settings-tab-btn" data-settings-tab-btn="3"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/diamond.png?raw=true"></div>
+            <div class="d-flex settings-tab-btn" data-settings-tab-btn="3"><img src="https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/power-icon.png?raw=true"></div>
         </div>
         <div class="setting-tabs">
             <div class="settings-tab">
@@ -252,18 +254,7 @@
                         <p>Background color 2</p>
                         <input type="color" id="background-color-2">
                     </li>
-                    <li class="setting">
-                        <p>Text color</p>
-                        <input type="color" id="text-color">
-                    </li>
-                    
-
                 </ul>
-                <div class="d-flex local-settings-buttons">
-                    <button class="reset-local-settings-btn">Reset</button>
-                    <button class="revert-local-settings-btn">Revert</button>
-                    <button class="save-local-settings-btn">Save</button>
-                </div>
             </div>
             <div class="settings-tab">
                 <ul>
@@ -303,11 +294,6 @@
                     </li>
 
                 </ul>
-                <div class="d-flex local-settings-buttons">
-                    <button class="reset-local-settings-btn">Reset</button>
-                    <button class="revert-local-settings-btn">Revert</button>
-                    <button class="save-local-settings-btn">Save</button>
-                </div>
             </div>
             <div class="settings-tab">
                 <ul>
@@ -332,55 +318,37 @@
                     <li class="setting">
                         <p>Video FPS</p>
                         <select id="video-fps">
-                            <option value="20">20 FPS</option>
-                            <option value="10">10 FPS</option>
-                            <option value="6">6 FPS</option>
+                            <option value="50">20 FPS</option>
+                            <option value="100">10 FPS</option>
+                            <option value="200">5 FPS</option>
                         </select>
                     </li>
                 </ul>
-                <div class="d-flex local-settings-buttons">
-                    <button class="reset-local-settings-btn">Reset</button>
-                    <button class="revert-local-settings-btn">Revert</button>
-                    <button class="save-local-settings-btn">Save</button>
-                </div>
             </div>
             <div class="settings-tab">
                 <ul>
-                    <h1>Admin Settings</h1>
+                    <h1>Controller Actions</h1>
                     <li class="setting">
-                        <p>Wifi:</p>
-                    </li>
-                    <li class="setting">
-                        <p>Name</p>
-                        <input type="text" id="wifi-name">
-                    </li>
-                    <li class="setting">
-                        <p>Password</p>
-                        <input type="text" id="wifi-password">
-                    </li>
 
-                    <li class="setting">
-                        <p>Access Method</p>
-                        <select id="access-method">
-                            <option value="password">Password</option>
-                            <option value="whitelist">Whitelist</option>
-                        </select>
+                        <button class="restart-mc-btn">Restart</button>
                     </li>
+                    <li class="setting">
 
-                    <li class="setting">
-                        <p>Passwords:</p>
-                    </li>
-                    <li class="setting">
-                        <p>Access Password</p>
-                        <input type="text" id="access-password">
-                    </li>
-                    <li class="setting">
-                        <p>Admin Password</p>
-                        <input type="text" id="admin-password">
+                        <button class="setup-mc-btn">Enter Setup</button>
                     </li>
                 </ul>
             </div>
+            <div class="d-flex local-settings-buttons">
+                <button class="reset-local-settings-btn">Reset</button>
+                <button class="revert-local-settings-btn">Revert</button>
+                <button class="save-local-settings-btn">Save</button>
+            </div>
+            
         </div>
+    </div>
+    <div class="rotate-blur"></div>
+    <div class="d-flex rotate">
+        <p>Simple Remote doesn't support landscape view. Please rotate your phone.</p>
     </div>
 
 

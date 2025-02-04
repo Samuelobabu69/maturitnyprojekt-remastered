@@ -2,12 +2,18 @@
 
 $(document).ready(() => {
 
+    const DEBUG = true
+
     async function request (method, type, data, target) {
 
         // This function is used to send a POST request to the server/controller
 
         if (target == "pc") {
-            target = `http://${computerIp}:65432`
+            if (DEBUG) {
+                target = `http://127.0.0.1:65432`
+            } else {
+                target = `http://${computerIp}:65432`
+            }
         }
         
         if (target == "mc") {
@@ -15,7 +21,8 @@ $(document).ready(() => {
         }
 
         let message = {type: type, data: data}
-    
+        
+
         let response = await fetch(target, {
             method: method,
             headers: {
@@ -33,6 +40,8 @@ $(document).ready(() => {
             return response;
         }
 
+        
+
 
     }
 
@@ -42,23 +51,28 @@ $(document).ready(() => {
 
         clearTimeout(logoutTimeout);
         logoutTimeout = setTimeout(() => {
-            logout()
+            logout("Disconnected for inactivity")
         }, 60000);
     }
 
-    function logout () {
+    function logout (reason) {
+        
         loggedIn = false;
-        settingsHidden = true;
         request("POST", "disconnect", "None", "mc");
         loginScreen.css("display", "flex");
         controlScreen.css("display", "none");
         $(document).off("touchstart", inactiveLogout);
         $(document).off("touchmove", inactiveLogout);
         $(document).off("touchend", inactiveLogout);
-        loginError.text("Disconnected for inactivity.");
-        settingsScreen.css("left", "-100vw");
-    }
+        loginError.text(reason);
+        if (!settingsHidden) {
+            settingsButton.trigger("touchstart");
+        }
+        settingsHidden = true;
+        revertLocalSettings();
+        
 
+    }
 
     
 
@@ -93,15 +107,31 @@ $(document).ready(() => {
             btnElem.css("transform", "scale(1)")
         })
     }
-    
+
+    function handleOrientationChange(mql) {
+
+        // Handles the change of screen orientation on mobile devices
+
+        if (mql.matches) {
+            // Portrait
+            rotateBlur.css({
+                "display": "none",
+                "backdrop-filter": "blur(0px)"
+            });
+            rotateScreen.css("display", "none");
+        } else {
+            // Landscape
+            rotateBlur.css({
+                "display": "flex",
+                "backdrop-filter": "blur(5px)"
+            });
+            rotateScreen.css("display", "flex");
+        }
+    }
+
     $(window).on("beforeunload", () => {
         request("POST", "disconnect", "None", "mc");
     })
-
-    
-
-
-
     
     /// Login ///
     
@@ -154,7 +184,7 @@ $(document).ready(() => {
 
         console.log(response);
 
-        if (response["type"] == "accessGranted") {
+        if (response["type"] == "accessGranted" || DEBUG) {
             loggedIn = true
             computerIp = response["data"]
             loginScreen.css("display", "none");
@@ -181,6 +211,34 @@ $(document).ready(() => {
         });
 
     })
+
+    /// States ///
+
+    const adminPanelState = $(".state-text");
+
+    setInterval(async () => {
+        if (loggedIn) {
+            let ttl = new Promise((_, reject) => {
+                setTimeout(() => reject("OFF"), 3000)
+            })
+
+            let state = "ON"
+            let response;
+            
+            try {
+                response = await Promise.race([request("POST", "stateCheck", "none", "pc"), ttl])
+            } catch (error) {
+                response = error
+            }
+            
+            if (response == "OFF" || String(response).includes("Failed to fetch")) {
+                state = "OFF"
+            }    
+
+            adminPanelState.text(state)
+        }
+    }, 3000);
+    
 
     /// Power Button ///
 
@@ -384,7 +442,7 @@ $(document).ready(() => {
             // Absolute position of the key
             absoluteX = key.offset().left;
 
-            // Happens after half a second of holding the key.
+            // Happens after 400 ms of holding the key.
             keyHoldTimer = setTimeout(() => {
                 let newWidth;
                 let oldWidth = keyAftertapElem.css("width");
@@ -496,7 +554,6 @@ $(document).ready(() => {
                 keyToSend = keyToSend.toUpperCase();
             }
 
-            // TODO: character sending
             request("POST", "keyPress", keyToSend, "pc")
             console.log(keyToSend)
 
@@ -691,14 +748,13 @@ $(document).ready(() => {
         "animated-background": "running",
         "background-color-1": "#000584",
         "background-color-2": "#0A0172",
-        "text-color": "#FFFFFF",
         "keyboard-layout": "qwertz",
         "keyboard-letter-size": "medium",
         "mouse-sensitivity": "100",
         "mouse-update-interval": "100",
-        "video-enabled": "true",
+        "video-enabled": "false",
         "video-quality": "medium",
-        "video-fps": "10"
+        "video-fps": "100"
     }
 
     if (!localStorage.getItem("settings")) {
@@ -710,7 +766,6 @@ $(document).ready(() => {
     const animatedBackgroundSwitch = $("#animated-background");
     const backgroundColor1Input = $("#background-color-1");
     const backgroundColor2Input = $("#background-color-2");
-    const textColorInput = $("#text-color");
     const keyboardLayoutInput = $("#keyboard-layout");
     const keyboardLetterSizeInput = $("#keyboard-letter-size");
     const mouseSensitivityInput = $("#mouse-sensitivity");
@@ -726,18 +781,42 @@ $(document).ready(() => {
     const revertLocalSettingsBtns = $(".revert-local-settings-btn");
     const resetLocalSettingsBtns = $(".reset-local-settings-btn");
 
+    const restartMcBtn = $(".restart-mc-btn");
+    const setupMcBtn = $(".setup-mc-btn");
+
+    animateButton(restartMcBtn);   
+    animateButton(setupMcBtn); 
+
+    restartMcBtn.click(() => {
+        buttonConfirmation(restartMcBtn, () => {
+            request("POST", "reset", "none", "mc");
+            logout("Reseting, try logging in soon");
+        }, 2000)
+    })
+
+    setupMcBtn.click(() => {
+        buttonConfirmation(setupMcBtn, () => {
+            request("POST", "setup", "none", "mc");
+            logout("Entered setup, configuration from Admin Panel required");
+        }, 2000)
+    })
+
 
     let screenshareInterval;
 
     function screenshare() {
-        request("POST", "screenshareQuality", settings["video-quality"])
+        request("POST", "screenshareQuality", settings["video-quality"], "pc")
         clearInterval(screenshareInterval);
         screenshareInterval = setInterval(async () => {
             if (loggedIn) {
+                console.log("screen")
                 videoDisabledOutput.css("display", "none");
                 let screenshot_bytes =  await request("POST", "screenshare", "none", "pc");
-                console.log(screenshot_bytes)
-                videoImg.attr("src", "data:image/png;base64," + screenshot_bytes);
+                if (settings["video-enabled"] === "true") {
+                    videoImg.attr("src", "data:image/png;base64," + screenshot_bytes);
+                } else {
+                    videoImg.attr("src", "https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/black.jpg?raw=true")
+                }
             }
         }, Number(settings["video-fps"]));
         
@@ -754,7 +833,6 @@ $(document).ready(() => {
         bgMoving.css("animation-play-state", settings["animated-background"]);
         document.documentElement.style.setProperty('--colorbg1', settings["background-color-1"]);
         document.documentElement.style.setProperty('--colorbg2', settings["background-color-2"]);
-        document.documentElement.style.setProperty('--colortext', settings["text-color"]);
         mouseSensitivity = (Number(settings["mouse-sensitivity"]) / 100).toFixed(1)
         mouseUpdateInterval = Number(settings["mouse-update-interval"])
         if (settings["keyboard-letter-size"] == "large") {
@@ -781,9 +859,11 @@ $(document).ready(() => {
         }
 
         if (settings["video-enabled"] === "true") {
+            console.log("en")
             screenshare();
             videoDisabledOutput.css("display", "none");
         } else {
+            console.log("dis")
             clearInterval(screenshareInterval)
             videoDisabledOutput.css("display", "flex");
             videoImg.attr("src", "https://github.com/Samuelobabu69/maturitnyprojekt-remastered/blob/main/assets/black.jpg?raw=true")
@@ -800,7 +880,6 @@ $(document).ready(() => {
         }
         backgroundColor1Input.val(settings["background-color-1"]);
         backgroundColor2Input.val(settings["background-color-2"]);
-        textColorInput.val(settings["text-color"]);
         keyboardLayoutInput.val(settings["keyboard-layout"]);
         keyboardLetterSizeInput.val(settings["keyboard-letter-size"]);
         mouseSensitivityInput.val(settings["mouse-sensitivity"]);
@@ -888,10 +967,6 @@ $(document).ready(() => {
         settings["background-color-2"] = backgroundColor2Input.val();
         applyLocalSettings();
     })
-    textColorInput.change(() => {
-        settings["text-color"] = textColorInput.val();
-        applyLocalSettings();
-    });
     keyboardLayoutInput.change(() => {
         settings["keyboard-layout"] = keyboardLayoutInput.val();
         applyLocalSettings();
@@ -930,14 +1005,22 @@ $(document).ready(() => {
     })
     videoQualityInput.change(() => {
         settings["video-quality"] = videoQualityInput.val();
+        request("POST", "screenshareQuality", settings["video-quality"], "pc");
         applyLocalSettings();
-        screenshare();
     });
     videoFpsInput.change(() => {
         settings["video-fps"] = videoFpsInput.val();
         applyLocalSettings();
-        screenshare();
     })
+
+    /// Rotation Check ///
+
+    const rotateScreen = $(".rotate");
+    const rotateBlur = $(".rotate-blur");
+
+    let portraitMediaQuery = window.matchMedia("(orientation: portrait)");
+    portraitMediaQuery.addListener(handleOrientationChange);
+    handleOrientationChange(portraitMediaQuery);
 
     
 });
