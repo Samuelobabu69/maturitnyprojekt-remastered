@@ -2,7 +2,7 @@
 
 $(document).ready(() => {
 
-    const DEBUG = true
+    const DEBUG = false
 
     async function request (method, type, data, target) {
 
