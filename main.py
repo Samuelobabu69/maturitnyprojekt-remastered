@@ -1,11 +1,12 @@
 from ttkbootstrap import *
 from ttkbootstrap.constants import *
 from functools import partial
-import serial.tools.list_ports, time, serial, threading, json, os, winshell, pystray, socket, http.server, socketserver, pyperclip, io, base64
+import serial.tools.list_ports, time, serial, threading, json, os, winshell, pystray, socket, http.server, socketserver, pyperclip, io, base64, sys
 import pyautogui as pag
 
 pag.FAILSAFE = False
 
+# TODO: remove this ip
 CORSOrigins = ["http://127.0.0.1:5500"]
 initialX, initialY = None, None
 screenshareQuality = 800
@@ -243,6 +244,8 @@ class App:
 
     def quitApp(self):
         """Quit the app."""
+
+        self.sendCommandToController("END setup")
 
         self.instanceLock.close()
         if self. serverThread and self.serverThread.is_alive():
@@ -608,7 +611,7 @@ class App:
         wifiPassFrame.pack()
         wifiPassLabel = Label(wifiPassFrame, text="Password:", font=self.FONT_DEFAULT)
         wifiPassLabel.pack(side=LEFT, padx=5)
-        wifiPassEntry = Entry(wifiPassFrame, width=10)
+        wifiPassEntry = Entry(wifiPassFrame, width=10, show="•")
         wifiPassEntry.pack(padx=5)
 
         controls = Frame(self.app, width=self.WINDOW_WIDTH, height=30)
@@ -634,8 +637,38 @@ class App:
 
         nextBtn.config(command=partial(self.setupScreen3_WifiTest, wifiNameDropdown, wifiNameSelectedOption, wifiPassEntry, wifiListRefreshBtn, wifiTestResult, backBtn, nextBtn))
 
+    def setupScreen4_onNext(self, passwordEntry):
+
+        self.sendCommandToController("ACCESS_PASSWORD " + passwordEntry.get().strip())
+        self.setupScreen5()
+        
+    def setupScreen4_onInput(self, passwordEntry, nextBtn, _):
+
+        if passwordEntry.get().strip():
+            nextBtn.config(state="enabled", cursor="hand2")
+        else:
+            nextBtn.config(state="disabled", cursor="arrow")
 
     def setupScreen4(self):
+
+        self.clearScreen() 
+
+        Label(self.app, text="Enter a password that will be used for authenification into Simple Remote.", font=self.FONT_DEFAULT, justify=CENTER, wraplength=self.WINDOW_WIDTH-20).pack(padx=10, pady=10)
+
+        passwordEntry = Entry(self.app, width=10, show="•")
+        passwordEntry.pack(pady=5)
+
+        controls = Frame(self.app, width=self.WINDOW_WIDTH, height=30)
+        controls.pack_propagate(False)
+        controls.pack(side="bottom", fill="x", padx=10, pady=10)
+        backBtn = Button(controls, text="Back", bootstyle="primary", width=10, cursor="hand2", command=self.setupScreen3)
+        backBtn.pack(side="left")
+        nextBtn = Button(controls, text="Next", bootstyle="primary", width=10, cursor="hand2", state="disabled", command=partial(self.setupScreen4_onNext, passwordEntry))
+        nextBtn.pack(side="right")
+
+        passwordEntry.bind("<KeyRelease>", partial(self.setupScreen4_onInput, passwordEntry, nextBtn))
+
+    def setupScreen5(self):
 
         self.clearScreen()
 
@@ -646,7 +679,7 @@ class App:
         controls.pack(side="bottom", fill="x", padx=10, pady=10)
         backBtn = Button(controls, text="Back", bootstyle="primary", width=10, cursor="hand2", state="disabled")
         backBtn.pack(side="left")
-        nextBtn = Button(controls, text="Next", bootstyle="primary", width=10, cursor="hand2", command=self.setupScreen5)
+        nextBtn = Button(controls, text="Next", bootstyle="primary", width=10, cursor="hand2", command=self.setupScreen6)
         nextBtn.pack(side="right")
 
         # TODO: Send "END" command to the controller and tell it to change it's onNextStartup to "run"
@@ -655,7 +688,7 @@ class App:
         self.threadEnd = True
 
 
-    def setupScreen5(self):
+    def setupScreen6(self):
 
         self.clearScreen()
 
@@ -664,19 +697,17 @@ class App:
         controls = Frame(self.app, width=self.WINDOW_WIDTH, height=30)
         controls.pack_propagate(False)
         controls.pack(side="bottom", fill="x", padx=10, pady=10)
-        backBtn = Button(controls, text="Back", bootstyle="primary", width=10, cursor="hand2", command=self.setupScreen4)
+        backBtn = Button(controls, text="Back", bootstyle="primary", width=10, cursor="hand2", command=self.setupScreen5)
         backBtn.pack(side="left")
-        nextBtn = Button(controls, text="Next", bootstyle="primary", width=10, cursor="hand2", command=self.setupScreen6)
+        nextBtn = Button(controls, text="Next", bootstyle="primary", width=10, cursor="hand2", command=self.setupScreen7)
         nextBtn.pack(side="right")
 
 
-    def setupScreen6_addToStartup(self, addToStartupBtn):
+    def setupScreen7_addToStartup(self, addToStartupBtn):
 
         username = os.environ.get("USERNAME")
         startupPath = f"C:\\Users\\{username}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
-        target_file = r"C:\Users\samue\Desktop\Samuel\Iné\CML.exe"
-
-        # TODO: zmeniť target_file, description a meno
+        target_file = sys.executable
 
         with winshell.shortcut(startupPath + "\\SimpleRemote.lnk") as shortcut:
             shortcut.path = target_file
@@ -689,7 +720,7 @@ class App:
         Button(self.app, text="Open Settings", bootstyle="primary", cursor="hand2", command=partial(os.system, "start ms-settings:startupapps")).pack(pady=10)
 
 
-    def setupScreen6(self):
+    def setupScreen7(self):
 
         self.clearScreen()
 
@@ -698,18 +729,18 @@ class App:
         addToStartupBtn = Button(self.app, text="Add to Startup Apps", cursor="hand2")
         addToStartupBtn.pack(pady=10)
 
-        addToStartupBtn.config(command=partial(self.setupScreen6_addToStartup, addToStartupBtn))
+        addToStartupBtn.config(command=partial(self.setupScreen7_addToStartup, addToStartupBtn))
 
         controls = Frame(self.app, width=self.WINDOW_WIDTH, height=30)
         controls.pack_propagate(False)
         controls.pack(side="bottom", fill="x", padx=10, pady=10)
-        backBtn = Button(controls, text="Back", bootstyle="primary", width=10, cursor="hand2", command=self.setupScreen5)
+        backBtn = Button(controls, text="Back", bootstyle="primary", width=10, cursor="hand2", command=self.setupScreen6)
         backBtn.pack(side="left")
-        nextBtn = Button(controls, text="Finish", bootstyle="primary", width=10, cursor="hand2", command=self.setupScreen7)
+        nextBtn = Button(controls, text="Finish", bootstyle="primary", width=10, cursor="hand2", command=self.setupScreen8)
         nextBtn.pack(side="right")
 
     
-    def setupScreen7(self):
+    def setupScreen8(self):
 
         self.clearScreen()
         

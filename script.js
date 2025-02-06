@@ -2,11 +2,13 @@
 
 $(document).ready(() => {
 
-    const DEBUG = false
+    const DEBUG = true
 
     async function request (method, type, data, target) {
 
         // This function is used to send a POST request to the server/controller
+
+        
 
         if (target == "pc") {
             if (DEBUG) {
@@ -22,16 +24,21 @@ $(document).ready(() => {
 
         let message = {type: type, data: data}
         
-
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 5000);
+        
         let response = await fetch(target, {
             method: method,
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(message)
+            body: JSON.stringify(message),
+            signal: controller.signal
         })
         .then(response => response.text())
         .catch(error => error);
+
+        clearInterval(timer);
 
         try {
             return JSON.parse(response);
@@ -39,10 +46,6 @@ $(document).ready(() => {
         catch {
             return response;
         }
-
-        
-
-
     }
 
     function inactiveLogout () {
@@ -73,10 +76,6 @@ $(document).ready(() => {
         
 
     }
-
-    
-
-    
 
     function buttonConfirmation (btnElem, func, timeToConfirm = 1500) {
 
@@ -200,7 +199,7 @@ $(document).ready(() => {
         } else if (response["type"] == "ttlReached") {
             loginError.text("Took too long");
         } else {
-            loginError.text("Unknown error");
+            loginError.text("Unknown error, try refreshing");
         }
 
         connectButton.prop("disabled", false);
@@ -212,9 +211,9 @@ $(document).ready(() => {
 
     })
 
-    /// States ///
+    /// State ///
 
-    const adminPanelState = $(".state-text");
+    const adminPanelNotice = $(".state-text");
 
     setInterval(async () => {
         if (loggedIn) {
@@ -222,7 +221,6 @@ $(document).ready(() => {
                 setTimeout(() => reject("OFF"), 3000)
             })
 
-            let state = "ON"
             let response;
             
             try {
@@ -232,10 +230,12 @@ $(document).ready(() => {
             }
             
             if (response == "OFF" || String(response).includes("Failed to fetch")) {
-                state = "OFF"
-            }    
+                adminPanelNotice.css("display", "inline-block");
+            } else {
+                adminPanelNotice.css("display", "none");
+            }
 
-            adminPanelState.text(state)
+            
         }
     }, 3000);
     
@@ -781,25 +781,7 @@ $(document).ready(() => {
     const revertLocalSettingsBtns = $(".revert-local-settings-btn");
     const resetLocalSettingsBtns = $(".reset-local-settings-btn");
 
-    const restartMcBtn = $(".restart-mc-btn");
-    const setupMcBtn = $(".setup-mc-btn");
-
-    animateButton(restartMcBtn);   
-    animateButton(setupMcBtn); 
-
-    restartMcBtn.click(() => {
-        buttonConfirmation(restartMcBtn, () => {
-            request("POST", "reset", "none", "mc");
-            logout("Reseting, try logging in soon");
-        }, 2000)
-    })
-
-    setupMcBtn.click(() => {
-        buttonConfirmation(setupMcBtn, () => {
-            request("POST", "setup", "none", "mc");
-            logout("Entered setup, configuration from Admin Panel required");
-        }, 2000)
-    })
+    
 
 
     let screenshareInterval;
@@ -1013,6 +995,28 @@ $(document).ready(() => {
         applyLocalSettings();
     })
 
+    /// Controller Actions ///
+
+    const restartMcBtn = $(".restart-mc-btn");
+    const setupMcBtn = $(".setup-mc-btn");
+
+    animateButton(restartMcBtn);   
+    animateButton(setupMcBtn); 
+
+    restartMcBtn.click(() => {
+        buttonConfirmation(restartMcBtn, () => {
+            request("POST", "restart", "none", "mc");
+            logout("Reseting, you can log back in soon");
+        }, 2000)
+    })
+
+    setupMcBtn.click(() => {
+        buttonConfirmation(setupMcBtn, () => {
+            request("POST", "setup", "none", "mc");
+            logout("Entered setup, configuration from Admin Panel required");
+        }, 2000)
+    })
+
     /// Rotation Check ///
 
     const rotateScreen = $(".rotate");
@@ -1022,6 +1026,14 @@ $(document).ready(() => {
     portraitMediaQuery.addListener(handleOrientationChange);
     handleOrientationChange(portraitMediaQuery);
 
+    /// Log Out ///
+
+    const logoutBtn = $(".logout-btn");
+
+    animateButton(logoutBtn);
+    logoutBtn.click(() => {
+        buttonConfirmation(logoutBtn, logout, 1500);
+    })
     
 });
 

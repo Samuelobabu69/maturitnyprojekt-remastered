@@ -210,11 +210,27 @@ p, h1, h2, h3, h4, h5, h6, textarea, button, input {
     z-index: 1;
 }
 
-.states {
+.state-text {
+    display: none;
     position: absolute;
     top: 30%;
     color: white;
     margin-left: 16px;
+    max-width: 60%;
+}
+
+.logout-btn {
+    position: absolute;
+    top: 30%;
+    right: 0;
+    margin-top: 16px;
+    margin-right: 16px;
+    width: 25%;
+    height: 30px;
+    border: 2px solid white;
+    border-radius: 30px;
+    background-color: transparent;
+    color: white;
 }
 
 .keyboard {
