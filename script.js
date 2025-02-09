@@ -751,10 +751,10 @@ $(document).ready(() => {
         "keyboard-layout": "qwertz",
         "keyboard-letter-size": "medium",
         "mouse-sensitivity": "100",
-        "mouse-update-interval": "100",
+        "mouse-update-interval": "200",
         "video-enabled": "false",
-        "video-quality": "medium",
-        "video-fps": "100"
+        "video-quality": "low",
+        "video-fps": "200"
     }
 
     if (!localStorage.getItem("settings")) {
